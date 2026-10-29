@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>MONOPOLY 7 — Professional Sales Platform</title>
+
+    <!-- PWA iOS Standalone Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="MONOPOLY 7">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#0A0A0C">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            DEFAULT: '#FF2E3B',
+                            dark: '#D31322',
+                            hover: '#E01B2B',
+                            glow: 'rgba(255, 46, 59, 0.25)'
+                        },
+                        mono: {
+                            950: '#0A0A0C',
+                            900: '#121216',
+                            800: '#1C1C24',
+                            700: '#2A2A36',
+                            600: '#3F3F50',
+                            400: '#8E8EA0',
+                            300: '#B4B4C4',
+                            100: '#F0F0F5'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Custom Glassmorphism CSS -->
+    <style>
+        body {
+            background-color: #0A0A0C;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: #F0F0F5;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+        .glass-panel {
+            background: rgba(18, 18, 22, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #0A0A0C;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #2A2A36;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="bg-mono-950 text-mono-100 min-h-screen flex flex-col antialiased selection:bg-brand selection:text-white">
+
+    <!-- APP WRAPPER -->
+    <div id="app-container" class="flex-1 flex flex-col md:flex-row max-w-[1600px] mx-auto w-full relative">
+
+        <!-- DESKTOP SIDEBAR -->
+        <aside class="hidden md:flex flex-col w-64 bg-mono-900 border-r border-mono-800 p-5 justify-between shrink-0 h-screen sticky top-0 z-30">
+            <div class="space-y-6">
+                <!-- LOGO MONOPOLY 7 -->
+                <div class="flex items-center gap-3 px-2">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand to-brand-dark flex items-center justify-center shadow-lg shadow-brand/30 border border-brand/40">
+                        <span class="font-black text-xl tracking-tighter text-white">7</span>
+                    </div>
+                    <div>
+                        <h1 class="font-black text-lg tracking-wider text-white flex items-center gap-1">
+                            MONOPOLY <span class="text-brand">7</span>
+                        </h1>
+                        <p class="text-[10px] font-mono uppercase tracking-widest text-mono-400">Sales Platform</p>
+                    </div>
+                </div>
+
+                <!-- NAVIGATION -->
+                <nav class="space-y-1.5 pt-4">
+                    <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all bg-brand text-white shadow-lg shadow-brand/20">
+                        <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Dashboard
+                    </button>
+                    <button onclick="switchTab('vendas')" id="nav-vendas" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-mono-300 hover:text-white hover:bg-mono-800 transition-all">
+                        <i data-lucide="shopping-bag" class="w-4 h-4"></i> Vendas
+                    </button>
+                    <button onclick="switchTab('produtos')" id="nav-produtos" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-mono-300 hover:text-white hover:bg-mono-800 transition-all">
+                        <i data-lucide="package" class="w-4 h-4"></i> Produtos
+                    </button>
+                    <button onclick="switchTab('clientes')" id="nav-clientes" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-mono-300 hover:text-white hover:bg-mono-800 transition-all">
+                        <i data-lucide="users" class="w-4 h-4"></i> Clientes
+                    </button>
+                    <button onclick="switchTab('relatorios')" id="nav-relatorios" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-mono-300 hover:text-white hover:bg-mono-800 transition-all">
+                        <i data-lucide="bar-chart-3" class="w-4 h-4"></i> Relatórios
+                    </button>
+                    <button onclick="switchTab('notificacoes')" id="nav-notificacoes" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-mono-300 hover:text-white hover:bg-mono-800 transition-all">
+                        <i data-lucide="bell" class="w-4 h-4"></i> Push PWA
+                    </button>
+                    <button onclick="switchTab('configuracoes')" id="nav-configuracoes" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-mono-300 hover:text-white hover:bg-mono-800 transition-all">
+                        <i data-lucide="settings" class="w-4 h-4"></i> Configurações
+                    </button>
+                </nav>
+            </div>
+
+            <!-- ADMIN ACCESS TRIGGER -->
+            <div class="pt-4 border-t border-mono-800">
+                <button onclick="openAdminModal()" class="w-full flex items-center justify-between p-3 rounded-xl bg-mono-950 border border-brand/30 hover:border-brand/60 text-left transition group">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg bg-brand/20 border border-brand/40 flex items-center justify-center text-brand">
+                            <i data-lucide="shield" class="w-4 h-4"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-white group-hover:text-brand transition">Painel Admin</p>
+                            <p class="text-[10px] text-mono-400 font-mono">Notificações & Vendas</p>
+                        </div>
+                    </div>
+                    <i data-lucide="lock" class="w-3.5 h-3.5 text-mono-500"></i>
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT AREA -->
+        <div class="flex-1 flex flex-col min-w-0 pb-20 md:pb-6">
+
+            <!-- HEADER BAR -->
+            <header class="bg-mono-900/80 backdrop-blur-md border-b border-mono-800 sticky top-0 z-20 px-4 py-3 md:px-6">
+                <div class="flex items-center justify-between gap-4">
+                    <!-- Mobile Brand Logo -->
+                    <div class="flex items-center gap-2.5 md:hidden">
+                        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-brand-dark flex items-center justify-center shadow-md shadow-brand/30">
+                            <span class="font-black text-sm text-white">7</span>
+                        </div>
+                        <span class="font-black tracking-wider text-white text-base">MONOPOLY <span class="text-brand">7</span></span>
+                    </div>
+
+                    <!-- Online Status & Quick Admin Button -->
+                    <div class="flex items-center gap-3 ml-auto">
+                        <span id="system-status-badge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                            Sistema Online
+                        </span>
+                        <button onclick="openAdminModal()" class="flex items-center gap-2 px-3.5 py-1.5 bg-brand/10 hover:bg-brand/20 border border-brand/40 text-brand rounded-xl text-xs font-bold transition">
+                            <i data-lucide="shield" class="w-3.5 h-3.5"></i>
+                            Painel Admin
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <main class="p-4 md:p-6 space-y-6 max-w-7xl mx-auto w-full">
+
+                <!-- 1. DASHBOARD TAB -->
+                <section id="tab-dashboard" class="space-y-6">
+                    <!-- MAIN REVENUE CARD -->
+                    <div class="glass-panel p-6 rounded-2xl relative overflow-hidden bg-gradient-to-br from-mono-900 via-mono-900 to-mono-950 border border-mono-800">
+                        <div class="absolute top-0 right-0 w-64 h-64 bg-brand/10 rounded-full blur-3xl pointer-events-none"></div>
+                        
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+                            <div>
+                                <span class="text-xs font-mono uppercase tracking-widest text-mono-400">Faturamento Total</span>
+                                <h2 id="dash-faturamento-total" class="text-3xl md:text-5xl font-black text-white tracking-tight mt-1">R$ 12.458,90</h2>
+                            </div>
+                            <div class="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-3.5 py-1.5 rounded-xl text-xs font-bold w-fit">
+                                <i data-lucide="trending-up" class="w-4 h-4"></i> +18,4% este mês
+                            </div>
+                        </div>
+
+                        <!-- CARDS METRICAS SECUNDARIAS -->
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 pt-4 border-t border-mono-800/80">
+                            <div class="p-3 bg-mono-950/60 rounded-xl border border-mono-800">
+                                <p class="text-[10px] font-mono text-mono-400 uppercase">Vendas Hoje</p>
+                                <p id="dash-vendas-count" class="text-xl font-bold text-white mt-0.5">127</p>
+                            </div>
+                            <div class="p-3 bg-mono-950/60 rounded-xl border border-mono-800">
+                                <p class="text-[10px] font-mono text-mono-400 uppercase">Pedidos</p>
+                                <p id="dash-pedidos-count" class="text-xl font-bold text-white mt-0.5">143</p>
+                            </div>
+                            <div class="p-3 bg-mono-950/60 rounded-xl border border-mono-800">
+                                <p class="text-[10px] font-mono text-mono-400 uppercase">Ticket Médio</p>
+                                <p id="dash-ticket-medio" class="text-xl font-bold text-white mt-0.5">R$ 98,70</p>
+                            </div>
+                            <div class="p-3 bg-mono-950/60 rounded-xl border border-mono-800">
+                                <p class="text-[10px] font-mono text-mono-400 uppercase">Pushes Enviados</p>
+                                <p id="dash-notif-count" class="text-xl font-bold text-brand mt-0.5">48</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- REVENUE CHART -->
+                    <div class="glass-panel p-5 rounded-2xl border border-mono-800 space-y-4">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                                <i data-lucide="activity" class="w-4 h-4 text-brand"></i> Desempenho de Vendas
+                            </h3>
+                            <div class="flex items-center gap-1 bg-mono-950 p-1 rounded-xl border border-mono-800 self-start sm:self-auto">
+                                <button class="px-2.5 py-1 text-[11px] font-mono rounded-lg bg-brand text-white font-bold">Hoje</button>
+                                <button class="px-2.5 py-1 text-[11px] font-mono rounded-lg text-mono-400 hover:text-white">7 Dias</button>
+                                <button class="px-2.5 py-1 text-[11px] font-mono rounded-lg text-mono-400 hover:text-white">30 Dias</button>
+                            </div>
+                        </div>
+
+                        <!-- SVG CHART SIMULATION -->
+                        <div class="h-48 w-full pt-2">
+                            <svg class="w-full h-full" viewBox="0 0 500 150" preserveAspectRatio="none">
+                                <defs>
+                                    <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="0%" stop-color="#FF2E3B" stop-opacity="0.3"/>
+                                        <stop offset="100%" stop-color="#FF2E3B" stop-opacity="0.0"/>
+                                    </linearGradient>
+                                </defs>
+                                <path d="M 0 130 Q 80 90, 150 110 T 300 40 T 450 70 L 500 20 L 500 150 L 0 150 Z" fill="url(#chartGrad)"/>
+                                <path d="M 0 130 Q 80 90, 150 110 T 300 40 T 450 70 L 500 20" fill="none" stroke="#FF2E3B" stroke-width="3.5" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2. PAINEL ADMIN MASTER (PROTEGIDO) -->
+                <section id="tab-admin" class="hidden space-y-6">
+                    <div class="glass-panel p-6 rounded-2xl border border-brand/40 bg-mono-900/80 relative overflow-hidden">
+                        <div class="absolute -right-10 -top-10 w-40 h-40 bg-brand/10 rounded-full blur-3xl pointer-events-none"></div>
+                        
+                        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6 pb-4 border-b border-mono-800">
+                            <div>
+                                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand/20 border border-brand/40 text-brand text-xs font-bold mb-2">
+                                    <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Área Administrativa MONOPOLY 7
+                                </div>
+                                <h2 class="text-2xl font-black text-white tracking-tight">Painel de Controle Master</h2>
+                                <p class="text-xs text-mono-400">Configure notificações, tempo por push e ajuste dados de vendas ao vivo.</p>
+                            </div>
+                            <span class="px-3 py-1 bg-mono-950 rounded-lg text-xs font-mono border border-mono-800 text-mono-300">
+                                Modo: <strong class="text-brand">SUPERADMIN</strong>
+                            </span>
+                        </div>
+
+                        <!-- CONTROLES ADMIN -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+                            <!-- BLOCO 1: AJUSTE DE VENDAS & DASHBOARD -->
+                            <div class="glass-panel p-5 rounded-xl border border-mono-800 space-y-4 bg-mono-950/80">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-2 text-white font-bold text-sm">
+                                        <i data-lucide="sliders" class="w-4 h-4 text-brand"></i>
+                                        <span>Manipular Métricas de Vendas</span>
+                                    </div>
+                                    <span class="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">Edição Direta</span>
+                                </div>
+
+                                <div class="space-y-3 pt-2">
+                                    <div>
+                                        <label class="text-[11px] font-mono text-mono-300 uppercase block mb-1">Quantidade de Vendas Hoje</label>
+                                        <div class="flex gap-2">
+                                            <input type="number" id="admin-set-sales-count" value="127" class="w-full bg-mono-900 border border-mono-800 rounded-xl px-3.5 py-2 text-sm font-mono text-white focus:outline-none focus:border-brand">
+                                            <button onclick="adminApplySalesCount()" class="px-4 py-2 bg-brand hover:bg-brand-hover text-white rounded-xl text-xs font-bold shrink-0">Definir</button>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label class="text-[11px] font-mono text-mono-300 uppercase block mb-1">Faturamento Total Exibido (R$)</label>
+                                        <div class="flex gap-2">
+                                            <input type="number" id="admin-set-revenue" value="12458.90" step="0.01" class="w-full bg-mono-900 border border-mono-800 rounded-xl px-3.5 py-2 text-sm font-mono text-white focus:outline-none focus:border-brand">
+                                            <button onclick="adminApplyRevenue()" class="px-4 py-2 bg-brand hover:bg-brand-hover text-white rounded-xl text-xs font-bold shrink-0">Definir</button>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label class="text-[11px] font-mono text-mono-300 uppercase block mb-1">Valor Unitário por Notificação (R$)</label>
+                                        <input type="number" id="admin-set-ticket-val" value="97.90" step="0.01" class="w-full bg-mono-900 border border-mono-800 rounded-xl px-3.5 py-2 text-sm font-mono text-white focus:outline-none focus:border-brand">
+                                    </div>
+
+                                    <div class="pt-2 flex gap-2">
+                                        <button onclick="adminQuickPreset(1000, 100000)" class="flex-1 py-2 bg-mono-800 hover:bg-mono-700 text-mono-200 text-xs rounded-xl font-bold border border-mono-700">Setar 1.000 Vendas (R$ 100k)</button>
+                                        <button onclick="adminQuickPreset(0, 0)" class="py-2 px-3 bg-red-950/50 hover:bg-red-900/50 text-red-400 text-xs rounded-xl font-bold border border-red-800/40">Zerar</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- BLOCO 2: CONFIGURADOR DE NOTIFICAÇÕES E TEMPO (iOS BACKGROUND) -->
+                            <div class="glass-panel p-5 rounded-xl border border-mono-800 space-y-4 bg-mono-950/80">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-2 text-white font-bold text-sm">
+                                        <i data-lucide="bell-ring" class="w-4 h-4 text-brand"></i>
+                                        <span>Configurar Notificações Push</span>
+                                    </div>
+                                    <span class="text-[10px] font-mono text-brand bg-brand/10 px-2 py-0.5 rounded border border-brand/30">iPhone / iOS</span>
+                                </div>
+
+                                <div class="space-y-3">
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <div>
+                                            <label class="text-[11px] font-mono text-mono-300 uppercase block mb-1">Delay Inicial (Segundos)</label>
+                                            <input type="number" id="admin-push-delay" value="10" min="1" class="w-full bg-mono-900 border border-mono-800 rounded-xl px-3 py-2 text-sm font-mono text-white focus:outline-none focus:border-brand" title="Tempo para travar o celular antes do 1º disparo">
+                                            <span class="text-[10px] text-mono-400">Tempo para desligar a tela</span>
+                                        </div>
+                                        <div>
+                                            <label class="text-[11px] font-mono text-mono-300 uppercase block mb-1">Segundos por Push</label>
+                                            <input type="number" id="admin-push-interval" value="3" min="1" class="w-full bg-mono-900 border border-mono-800 rounded-xl px-3 py-2 text-sm font-mono text-white focus:outline-none focus:border-brand">
+                                            <span class="text-[10px] text-mono-400">Tempo entre cada alerta</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <div>
+                                            <label class="text-[11px] font-mono text-mono-300 uppercase block mb-1">Qtd Notificações</label>
+                                            <input type="number" id="admin-push-count" value="10" min="1" max="100" class="w-full bg-mono-900 border border-mono-800 rounded-xl px-3 py-2 text-sm font-mono text-white focus:outline-none focus:border-brand">
+                                        </div>
+                                        <div>
+                                            <label class="text-[11px] font-mono text-mono-300 uppercase block mb-1">Tipo de Notificação</label>
+                                            <select id="admin-push-type" class="w-full bg-mono-900 border border-mono-800 rounded-xl px-2.5 py-2 text-xs font-mono text-white focus:outline-none focus:border-brand">
+                                                <option value="Venda Aprovada">🟢 Venda Aprovada</option>
+                                                <option value="Pagamento Recebido">💰 Pagamento Recebido</option>
+                                                <option value="Pix Confirmado">⚡ Pix Confirmado</option>
+                                                <option value="Compra Realizada">🛒 Compra Realizada</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- OPÇÕES DE MÉTRICAS NA NOTIFICAÇÃO -->
+                                    <div class="p-3 bg-mono-900 rounded-xl border border-mono-800 space-y-2">
+                                        <label class="text-[11px] font-semibold text-mono-200 block">Exibir nas Notificações Push:</label>
+                                        <div class="flex items-center justify-between text-xs text-mono-300">
+                                            <span>Exibir Faturamento de Hoje</span>
+                                            <input type="checkbox" id="admin-push-show-revenue" checked class="w-4 h-4 accent-brand rounded">
+                                        </div>
+                                        <div class="flex items-center justify-between text-xs text-mono-300">
+                                            <span>Exibir Total de Vendas do Dia</span>
+                                            <input type="checkbox" id="admin-push-show-total-sales" checked class="w-4 h-4 accent-brand rounded">
+                                        </div>
+                                    </div>
+
+                                    <button onclick="adminStartCustomPushSequence()" class="w-full py-3 bg-brand hover:bg-brand-hover text-white rounded-xl text-xs font-bold tracking-wider uppercase shadow-lg shadow-brand/20 transition flex items-center justify-center gap-2">
+                                        <i data-lucide="play" class="w-4 h-4"></i> Iniciar Disparos no iPhone
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- BARRA DE ACOMPANHAMENTO AO VIVO -->
+                        <div id="admin-sequence-status-box" class="hidden p-4 bg-mono-950 border border-brand/40 rounded-xl space-y-2 mt-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-brand flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-brand animate-ping"></span>
+                                    Sequência Ativa em Execução
+                                </span>
+                                <span id="admin-seq-counter" class="text-xs font-mono text-mono-300">0 / 0 enviados</span>
+                            </div>
+                            <div class="w-full bg-mono-900 h-2 rounded-full overflow-hidden">
+                                <div id="admin-seq-progress-bar" class="bg-brand h-full w-0 transition-all duration-300"></div>
+                            </div>
+                            <p id="admin-seq-next-timer" class="text-[11px] font-mono text-mono-400">Próximo disparo em: --s</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 3. VENDAS TAB -->
+                <section id="tab-vendas" class="hidden space-y-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div>
+                            <h2 class="text-2xl font-extrabold text-white tracking-tight">Histórico de Vendas</h2>
+                            <p class="text-xs text-mono-400">Gerenciamento completo das transações aprovadas e pendentes</p>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel rounded-2xl border border-mono-800 overflow-hidden">
+                        <div class="overflow-x-auto custom-scrollbar">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-mono-950 text-mono-400 font-mono uppercase text-[10px] border-b border-mono-800">
+                                    <tr>
+                                        <th class="p-3.5">ID Venda</th>
+                                        <th class="p-3.5">Cliente</th>
+                                        <th class="p-3.5">Produto</th>
+                                        <th class="p-3.5">Valor</th>
+                                        <th class="p-3.5">Status</th>
+                                        <th class="p-3.5">Data/Hora</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="sales-table-body" class="divide-y divide-mono-800/60 font-mono">
+                                    <tr class="hover:bg-mono-900/50">
+                                        <td class="p-3.5 text-brand font-bold">#M7-10294</td>
+                                        <td class="p-3.5 text-white font-sans font-semibold">Lucas Silva</td>
+                                        <td class="p-3.5 text-mono-300 font-sans">Produto Digital Pro</td>
+                                        <td class="p-3.5 text-white font-bold">R$ 197,90</td>
+                                        <td class="p-3.5"><span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px]">🟢 Aprovada</span></td>
+                                        <td class="p-3.5 text-mono-400">Hoje, 14:22</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 4. PUSH PWA TAB -->
+                <section id="tab-notificacoes" class="hidden space-y-6">
+                    <div>
+                        <h2 class="text-2xl font-extrabold text-white tracking-tight">Notificações Push PWA</h2>
+                        <p class="text-xs text-mono-400">Status de instalação no iOS e teste manual de disparo</p>
+                    </div>
+
+                    <div class="glass-panel p-6 rounded-2xl border border-mono-800 space-y-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-brand/20 border border-brand/30 flex items-center justify-center text-brand">
+                                    <i data-lucide="smartphone" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-sm font-bold text-white">Notificações no iPhone / iOS</h3>
+                                    <p class="text-xs text-mono-400">Garanta que o MONOPOLY 7 esteja adicionado à Tela de Início.</p>
+                                </div>
+                            </div>
+                            <button onclick="requestPushPermission()" class="px-4 py-2 bg-brand hover:bg-brand-hover text-white rounded-xl text-xs font-bold">Ativar Push</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 5. CONFIGURAÇÕES TAB -->
+                <section id="tab-configuracoes" class="hidden space-y-6">
+                    <div>
+                        <h2 class="text-2xl font-extrabold text-white tracking-tight">Configurações Gerais</h2>
+                        <p class="text-xs text-mono-400">Preferências do sistema e integrações</p>
+                    </div>
+
+                    <div class="glass-panel p-6 rounded-2xl border border-mono-800 space-y-4">
+                        <h3 class="text-sm font-bold text-white">Integração Webhook (Modo Real)</h3>
+                        <p class="text-xs text-mono-400">Conecte sua plataforma de vendas (Kiwify, Hotmart, Cakto, Eduzz)</p>
+                        <input type="text" readonly value="https://api.monopoly7.io/v1/webhooks/sales/live_key_90218" class="w-full bg-mono-950 border border-mono-800 rounded-xl px-3.5 py-2 text-xs font-mono text-emerald-400">
+                    </div>
+                </section>
+
+                <!-- PLACEHOLDERS -->
+                <section id="tab-produtos" class="hidden space-y-6"><h2 class="text-xl font-bold text-white">Módulo de Produtos</h2></section>
+                <section id="tab-clientes" class="hidden space-y-6"><h2 class="text-xl font-bold text-white">Módulo de Clientes</h2></section>
+                <section id="tab-relatorios" class="hidden space-y-6"><h2 class="text-xl font-bold text-white">Relatórios Avançados</h2></section>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- MODAL DE SENHA DO ADMIN -->
+    <div id="admin-pin-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="glass-panel p-6 rounded-2xl border border-brand/40 w-full max-w-sm space-y-4 text-center">
+            <div class="w-12 h-12 bg-brand/10 border border-brand/30 rounded-2xl flex items-center justify-center mx-auto text-brand">
+                <i data-lucide="lock" class="w-6 h-6"></i>
+            </div>
+            <div>
+                <h3 class="text-lg font-extrabold text-white">Acesso do Administrador</h3>
+                <p class="text-xs text-mono-400 mt-1">Digite a senha para acessar o painel de controle master.</p>
+            </div>
+            <div>
+                <input type="password" id="admin-pin-input" placeholder="Senha PIN (7777)" class="w-full bg-mono-950 border border-mono-800 rounded-xl px-4 py-2.5 text-center font-mono text-lg text-white tracking-widest focus:outline-none focus:border-brand">
+            </div>
+            <div class="flex gap-2">
+                <button onclick="closeAdminModal()" class="flex-1 py-2.5 bg-mono-800 hover:bg-mono-700 text-mono-300 text-xs font-bold rounded-xl">Cancelar</button>
+                <button onclick="submitAdminPin()" class="flex-1 py-2.5 bg-brand hover:bg-brand-hover text-white text-xs font-bold rounded-xl">Entrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT APP LOGIC -->
+    <script>
+        // PREVENÇÃO DE REDIRECIONAMENTO FORA DO PWA NO iOS
+        (function(a,b,c){if(c in b&&b[c]){var d,e=a.location,f=/javascript:/i;a.addEventListener("click",function(a){if("A"===a.target.nodeName){var c=a.target.getAttribute("href");if(!f.test(c)&&(-1!==c.indexOf("http")||-1!==c.indexOf("https"))&&-1===c.indexOf(e.host))a.preventDefault(),e.href=c}},!1)}})(document,window.navigator,"standalone");
+
+        // ESTADO GLOBAL DO APLICATIVO
+        const APP_STATE = {
+            revenue: 12458.90,
+            totalSalesCount: 127,
+            ordersCount: 143,
+            notificationsSent: 48,
+            adminAuth: false
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        });
+
+        // NAVEGAÇÃO ENTRE ABAS
+        function switchTab(tabId) {
+            const tabs = ['dashboard', 'vendas', 'produtos', 'clientes', 'relatorios', 'notificacoes', 'configuracoes', 'admin'];
+            tabs.forEach(t => {
+                const el = document.getElementById(`tab-${t}`);
+                if (el) el.classList.add('hidden');
+                
+                const navBtn = document.getElementById(`nav-${t}`);
+                if (navBtn) {
+                    navBtn.className = "w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-mono-300 hover:text-white hover:bg-mono-800 transition-all";
+                }
+            });
+
+            const targetTab = document.getElementById(`tab-${tabId}`);
+            if (targetTab) targetTab.classList.remove('hidden');
+
+            const activeNav = document.getElementById(`nav-${tabId}`);
+            if (activeNav) {
+                activeNav.className = "w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all bg-brand text-white shadow-lg shadow-brand/20";
+            }
+        }
+
+        // MODAL DO ADMIN
+        function openAdminModal() {
+            if (APP_STATE.adminAuth) {
+                switchTab('admin');
+                return;
+            }
+            document.getElementById('admin-pin-modal').classList.remove('hidden');
+            document.getElementById('admin-pin-input').focus();
+        }
+
+        function closeAdminModal() {
+            document.getElementById('admin-pin-modal').classList.add('hidden');
+        }
+
+        function submitAdminPin() {
+            const pin = document.getElementById('admin-pin-input').value;
+            if (pin === "7777" || pin === "admin") {
+                APP_STATE.adminAuth = true;
+                closeAdminModal();
+                switchTab('admin');
+            } else {
+                alert("Senha incorreta! Utilize a senha padrão: 7777");
+            }
+        }
+
+        // APERFEIÇOAMENTO DE METRICAS PELO ADMIN
+        function adminApplySalesCount() {
+            const count = parseInt(document.getElementById('admin-set-sales-count').value) || 0;
+            APP_STATE.totalSalesCount = count;
+            document.getElementById('dash-vendas-count').innerText = count.toLocaleString('pt-BR');
+            alert(`Vendas ajustadas para ${count}!`);
+        }
+
+        function adminApplyRevenue() {
+            const revenue = parseFloat(document.getElementById('admin-set-revenue').value) || 0;
+            APP_STATE.revenue = revenue;
+            document.getElementById('dash-faturamento-total').innerText = `R$ ${revenue.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            alert(`Faturamento ajustado para R$ ${revenue.toFixed(2)}!`);
+        }
+
+        function adminQuickPreset(sales, revenue) {
+            document.getElementById('admin-set-sales-count').value = sales;
+            document.getElementById('admin-set-revenue').value = revenue;
+            adminApplySalesCount();
+            adminApplyRevenue();
+        }
+
+        // DISPARADOR DE NOTIFICAÇÕES iOS EM SEGUNDO PLANO
+        function adminStartCustomPushSequence() {
+            const delaySec = parseInt(document.getElementById('admin-push-delay').value) || 10;
+            const intervalSec = parseInt(document.getElementById('admin-push-interval').value) || 3;
+            const totalPushes = parseInt(document.getElementById('admin-push-count').value) || 5;
+            const pushType = document.getElementById('admin-push-type').value;
+            const unitValue = parseFloat(document.getElementById('admin-set-ticket-val').value) || 97.90;
+            
+            const includeRevenue = document.getElementById('admin-push-show-revenue').checked;
+            const includeTotalSales = document.getElementById('admin-push-show-total-sales').checked;
+
+            if ("Notification" in window && Notification.permission !== "granted") {
+                Notification.requestPermission();
+            }
+
+            const statusBox = document.getElementById('admin-sequence-status-box');
+            statusBox.classList.remove('hidden');
+
+            let sentCount = 0;
+            document.getElementById('admin-seq-counter').innerText = `${sentCount} / ${totalPushes} enviados`;
+            document.getElementById('admin-seq-progress-bar').style.width = '0%';
+
+            alert(`Sequência ativada!\n\n1ª notificação em ${delaySec} segundos.\nBloqueie ou desligue a tela do celular agora para testar!`);
+
+            let currentTimer = delaySec;
+            document.getElementById('admin-seq-next-timer').innerText = `Aguardando delay inicial iOS: ${currentTimer}s...`;
+
+            const delayInterval = setInterval(() => {
+                currentTimer--;
+                if (currentTimer > 0) {
+                    document.getElementById('admin-seq-next-timer').innerText = `Aguardando delay inicial iOS: ${currentTimer}s...`;
+                } else {
+                    clearInterval(delayInterval);
+                    triggerNextPush();
+                }
+            }, 1000);
+
+            function triggerNextPush() {
+                sentCount++;
+                APP_STATE.totalSalesCount += 1;
+                APP_STATE.revenue += unitValue;
+
+                // Atualiza tela
+                document.getElementById('dash-vendas-count').innerText = APP_STATE.totalSalesCount.toLocaleString('pt-BR');
+                document.getElementById('dash-faturamento-total').innerText = `R$ ${APP_STATE.revenue.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+
+                // Texto da Notificação
+                let pushBody = `R$ ${unitValue.toFixed(2)}`;
+                let details = [];
+                if (includeRevenue) details.push(`Fat. Hoje: R$ ${APP_STATE.revenue.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`);
+                if (includeTotalSales) details.push(`Vendas: ${APP_STATE.totalSalesCount}`);
+                
+                if (details.length > 0) {
+                    pushBody += ` • ` + details.join(" | ");
+                }
+
+                // Disparar Notificação Nativas
+                if ("Notification" in window && Notification.permission === "granted") {
+                    new Notification(`🔔 MONOPOLY 7 — ${pushType}`, {
+                        body: pushBody,
+                        icon: 'https://placehold.co/128x128/FF2E3B/white?text=M7'
+                    });
+                }
+
+                // Som de Chime
+                playSaaSChimeSound();
+
+                // Progresso
+                document.getElementById('admin-seq-counter').innerText = `${sentCount} / ${totalPushes} enviados`;
+                document.getElementById('admin-seq-progress-bar').style.width = `${(sentCount / totalPushes) * 100}%`;
+
+                if (sentCount < totalPushes) {
+                    let nextCount = intervalSec;
+                    const loopTimer = setInterval(() => {
+                        nextCount--;
+                        if (nextCount > 0) {
+                            document.getElementById('admin-seq-next-timer').innerText = `Próximo push em: ${nextCount}s`;
+                        } else {
+                            clearInterval(loopTimer);
+                            triggerNextPush();
+                        }
+                    }, 1000);
+                } else {
+                    document.getElementById('admin-seq-next-timer').innerText = `Sequência finalizada com sucesso!`;
+                }
+            }
+        }
+
+        function playSaaSChimeSound() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.15);
+                gain.gain.setValueAtTime(0.3, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.3);
+            } catch (e) {}
+        }
+
+        function requestPushPermission() {
+            if ("Notification" in window) {
+                Notification.requestPermission().then(permission => {
+                    if (permission === "granted") {
+                        alert("Notificações ativadas com sucesso para iOS/PWA!");
+                    }
+                });
+            }
+        }
+    </script>
+</body>
+</html>
